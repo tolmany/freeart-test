@@ -1,12 +1,18 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "Licence": "MIT",
   "private": true,
   "dependencies": {
-    "@ahalabs/cra-template": "0.3.3",
+    "buffer": "^6.0.3",
+    "global": "^4.4.0",
+    "near-api-js": "0.44.2",
+    "near-cli": "^3.4.2",
+    "near-units": "^0.1.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
