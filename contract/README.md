@@ -1,91 +1,63 @@
-# Hello NEAR Contract
+# NEP-171 Token(NFT) Smart Contract
 
-The smart contract exposes two methods to enable storing and retrieving a greeting in the NEAR network.
+>**Note**: If you'd like to learn how to create an NFT contract from scratch that explores every aspect of the [NEP-171](https://github.com/near/NEPs/blob/master/neps/nep-0171.md) standard including an NFT marketplace, check out the NFT [Zero to Hero Tutorial](https://docs.near.org/tutorials/nfts/introduction).
 
-```rust
-const DEFAULT_GREETING: &str = "Hello";
+Prerequisites
+======
+  * Make sure Rust is installed per the prerequisites in [`near-sdk-rs`](https://github.com/near/near-sdk-rs).
+  * Make sure [near-cli](https://github.com/near/near-cli) is installed.
 
-#[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
-pub struct Contract {
-    greeting: String,
-}
+Explore this contract
+======
 
-impl Default for Contract {
-    fn default() -> Self {
-        Self{greeting: DEFAULT_GREETING.to_string()}
-    }
-}
+The source for this contract is in `nft/src/lib.rs`. It provides methods to manage access to tokens, transfer tokens, check access, and get token owner. Note, some further exploration inside the rust macros is needed to see how the `NonfungibleToken` contract is implmented.
 
-#[near_bindgen]
-impl Contract {
-    // Public: Returns the stored greeting, defaulting to 'Hello'
-    pub fn get_greeting(&self) -> String {
-        return self.greeting.clone();
-    }
-
-    // Public: Takes a greeting, such as 'howdy', and records it
-    pub fn set_greeting(&mut self, greeting: String) {
-        // Record a log permanently to the blockchain!
-        log!("Saving greeting {}", greeting);
-        self.greeting = greeting;
-    }
-}
+Building this contract
+======
+Run the following, and we'll build our rust project up via cargo. This will generate our WASM binaries into our `res/` directory. This is the smart contract we'll be deploying onto the NEAR blockchain later.
+```bash
+./scripts/build.sh
 ```
 
-<br />
-
-# Quickstart
-
-1. Make sure you have installed [rust](https://rust.org/).
-2. Install the [`NEAR CLI`](https://github.com/near/near-cli#setup)
-
-<br />
-
-## 1. Build and Deploy the Contract
-You can automatically compile and deploy the contract in the NEAR testnet by running:
+Tesitng this contract
+======
+We have some tests that you can run. For example, the following will run our simple tests to verify that our contract code is working.
 
 ```bash
-./deploy.sh
+cargo test -- --nocapture
 ```
 
-Once finished, check the `neardev/dev-account` file to find the address in which the contract was deployed:
+Using this contract
+======
+
+### Quikest deploy
+
+You can build and deploy this smart contract to a development account. [Dev Accounts](https://docs.near.org/concepts/basics/account#dev-accounts) are auto-generated accounts to assist in developing and testing smart contracts. Please see the [Standard deploy](#standard-deploy) section for creating a more personalized account to deploy to.
 
 ```bash
-cat ./neardev/dev-account
-# e.g. dev-1659899566943-21539992274727
+near dev-deploy --wasmFile res/near-nft.wasm
 ```
 
-<br />
+Behind the scenes, this is creating an account and deploying a contract to it. On the console, notice a message like:
 
-## 2. Retrieve the Greeting
+>Done deploying to dev-1234567890123-12345676
 
-`get_greeting` is a read-only method (aka `view` method).
-
-`View` methods can be called for **free** by anyone, even people **without a NEAR account**!
+In this instance, the account is `dev-1234567890123-12345676`. A file has been created containing a key pair to
+the account, located at `neardev/dev-account`. To make the next few steps easier, we're going to set an
+environment variable containing this development account id and use that when copy/pasting cmmands.
+Run this command to set the environment variable:
 
 ```bash
-# Use near-cli to get the greeting
-near view <dev-account> get_greeting
+source neardev/dev-account.env
 ```
 
-<br />
-
-## 3. Store a New Greeting
-`set_greeting` changes the contract's state, for which it is a `change` method.
-
-`Change` methods can only be invoked using a NEAR account, since the account needs to pay GAS for the transaction.
+You can tell if the environment variable is set correctly if your command line prints the account name after this command:
+```bash
+echo $CONTRACT_NAME
+```
+Now you can test each function of this contract. For example:
 
 ```bash
-# Use near-cli to set a new greeting
-near call <dev-account> set_greeting '{"greeting":"howdy"}' --accountId <dev-account>
+near call $CONTRACT_NAME new_default_meta '{"owner_id": "'$CONTRACT_NAME'"}' --accountId $CONTRACT_NAME
+near view $CONTRACT_NAME nft_metadata
 ```
-
-**Tip:** If you would like to call `set_greeting` using your own account, first login into NEAR using:
-
-```bash
-# Use near-cli to login your NEAR account
-near login
-```
-
-and then use the logged account to sign the transaction: `--accountId <your-account>`.
