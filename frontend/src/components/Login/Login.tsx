@@ -1,7 +1,12 @@
-import React, {useState} from "react";
+import React, {ChangeEvent, FormEvent, useState} from "react";
 
+interface FormData {
+    name: string;
+    phone: string;
+    email: string;
+}
 export const Login = () => {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         name: '',
         phone: '',
         email: ''
@@ -9,16 +14,16 @@ export const Login = () => {
 
     const {name, phone, email} = formData;
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value});
     }
 
-    const login = (name: String, phone: String, email: String) => {
-        console.log("name", name);
-        console.log("phone", phone);
-        console.log("email", email);
+    const login = (name: string, phone: string, email: string) => {
+        console.log("name: ", name);
+        console.log("phone: ", phone);
+        console.log("email: ", email);
     }
-    const onSubmit = (e: any) => {
+    const onSubmit = (e: FormEvent) => {
         e.preventDefault();
         login(name, phone, email);
     }
