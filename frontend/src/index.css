@@ -312,3 +312,43 @@ input:active {
   width: 100%;
   max-width: 40rem;
 }
+
+.account-info {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  margin-top: 24px;
+  row-gap: 12px;
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #27272933;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  padding: 36px 48px;
+  background-color: white;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.submit {
+  padding: 0 var(--spacing-m);
+  height: var(--input-height);
+}
