@@ -42,7 +42,6 @@ export const Dashboard = (contractId: any, walletToUse: any) => {
   };
 
   useEffect(() => {
-    walletToUse.viewMethod({contractId, method: 'getUserInfo'})
   }, [])
 
   return (

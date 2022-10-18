@@ -14,7 +14,7 @@ import { call, view, wallet } from "../utils/near";
  * contract. If the env var `REACT_APP_CONTRACT_NAME` changes, this file is
  * still a wrapper around the guest book contract.
  */
-export const CONTRACT_NAME = "guest-book.testnet";
+export const CONTRACT_NAME = "dev-1666100011540-95227225137871";
 
 /**
  * This is a Contract object instantiated using near-api-js.
@@ -25,25 +25,30 @@ export const CONTRACT_NAME = "guest-book.testnet";
  *
  * See other exports for a fully-typed approach instead.
  */
-export const Untyped = new naj.Contract(wallet.account(), CONTRACT_NAME, {
-  viewMethods: ["getMessages"],
-  changeMethods: ["addMessage"],
+const connectedWalletAccount = wallet.account();
+export const Untyped = new naj.Contract(connectedWalletAccount, CONTRACT_NAME, {
+  viewMethods: ["get_user_info", "test_user_info"],
+  changeMethods: ["update_user_info"],
 });
 
 /**
  * The data structure returned by `getMessages`
  */
-export interface Message {
-  premium: boolean;
-  sender: string;
-  text: string;
+export interface UserInfo {
+  name: string;
+  phone: string;
+  email: string;
 }
 
 /**
  * Get most recent 10 messages
  */
-export async function getMessages(): Promise<Message[]> {
-  return view(CONTRACT_NAME, "getMessages");
+export async function getUserInfo(accountId: any): Promise<UserInfo[]> {
+  return view(CONTRACT_NAME, "get_user_info");
+}
+
+export async function testUserInfo(): Promise<UserInfo[]> {
+  return view(CONTRACT_NAME, "test_user_info");
 }
 
 /**
@@ -61,10 +66,8 @@ export async function getMessages(): Promise<Message[]> {
  * @param options.walletCallbackUrl Callback url to send the NEAR Wallet if using it to sign transactions.
  * @param options.stringify Convert input arguments into a bytes array. By default the input is treated as a JSON. This is useful if the contract accepts Borsh (see https://borsh.io)
  */
-export async function addMessage(
-  args: {
-    text: string;
-  },
+export async function updateUserInfo(
+  userinfo: UserInfo,
   options?: {
     attachedDeposit?: NEAR;
     gas?: Gas;
@@ -73,5 +76,5 @@ export async function addMessage(
     stringify?: (input: any) => Buffer;
   }
 ): Promise<void> {
-  return call(CONTRACT_NAME, "addMessage", args, options);
+  return call(CONTRACT_NAME, "update_user_info", userinfo, options);
 }

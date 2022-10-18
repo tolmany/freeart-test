@@ -14,14 +14,22 @@ pub struct UserInfo {
 }
 
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
+#[derive(BorshDeserialize, BorshSerialize)]
 pub struct UserInfoContract {
-    user_info_list: HashMap<AccountId, UserInfo>,
+    user_info_list: HashMap<String, UserInfo>,
+}
+
+impl Default for UserInfoContract {
+    fn default() -> Self {
+        Self {
+            user_info_list: HashMap::new()
+        }
+    }
 }
 
 #[near_bindgen]
 impl UserInfoContract {
-    pub fn change_user_info(&mut self, account_id: AccountId, userinfo: UserInfo) -> Option<&UserInfo>{
+    pub fn change_user_info(&mut self, account_id: String, userinfo: UserInfo) -> Option<&UserInfo>{
         let _tmp_account_id = account_id.clone();
         if self.user_info_list.contains_key(&account_id) {
             *self.user_info_list.get_mut(&account_id).unwrap() = userinfo;
@@ -33,8 +41,18 @@ impl UserInfoContract {
         return self.user_info_list.get(&_tmp_account_id);
     }
 
-    pub fn get_user_info(&self, account_id: AccountId) -> Option<&UserInfo> {
+    pub fn get_user_info(&self, account_id: String) -> Option<&UserInfo> {
         return self.user_info_list.get(&account_id);
+    }
+
+    pub fn test_user_info(&self) -> UserInfo {
+        let userinfo: UserInfo = UserInfo {
+            name: "myname".to_string(),
+            phone: "myphone".to_string(),
+            email: "myemail".to_string(),
+        };
+
+        return userinfo;
     }
 }
 
@@ -48,7 +66,7 @@ mod tests {
 
     const MINT_STORAGE_COST: u128 = 5870000000000000000000;
 
-    fn get_context(predecessor_account_id: AccountId) -> VMContextBuilder {
+    fn get_context(predecessor_account_id: String) -> VMContextBuilder {
         let mut builder = VMContextBuilder::new();
         builder
             .current_account_id(accounts(0))
