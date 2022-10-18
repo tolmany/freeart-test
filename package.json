@@ -6,14 +6,15 @@
     "start": "cd frontend && npm run start",
     "deploy:nep171-contract": "cd contract/nep171-contract && ./deploy.sh",
     "deploy:userinfo-contract": "cd contract/userinfo-contract && ./deploy.sh",
-    "build": "npm run build:contract && npm run build:web",
+    "deploy": "npm run deploy:nep171-contract && npm run deploy:userinfo-contract",
+    "build": "npm run build:nep171-contract && npm run build:userinfo-contract && npm run build:web",
     "build:web": "cd frontend && npm run build",
     "build:nep171-contract": "cd contract/nep171-contract && ./build.sh",
     "build:userinfo-contract": "cd contract/userinfo-contract && ./build.sh",
     "test": "npm run test:unit && npm run test:integration",
-    "test:unit": "cd contract && cargo test",
-    "test:integration": "cd integration-tests && npm test -- -- \"./contract/target/wasm32-unknown-unknown/release/hello_near.wasm\"",
-    "postinstall": "cd frontend && npm install && cd .. && cd integration-tests && npm install && cd .. && echo rs contract"
+    "test:unit-userinfo": "cd contract/userinfo-contract && cargo test",
+    "test:unit-nep171": "cd contract/nep171-contract && cargo test",
+    "test:unit": "npm run test:unit-userinfo && npm run test:unit-nep171"
   },
   "devDependencies": {
     "near-cli": "^3.3.0"
