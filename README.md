@@ -79,9 +79,10 @@ Replace `PATH_TO_WASM_FILE` with the `wasm` that was generated in `contract` bui
 Step 3: set contract name in your frontend code
 -----------------------------------------------
 
-Modify the line in `src/config.js` that sets the account name of the contract. Set it to the account id you used above.
+Modify the line in `.env` that sets the account name of the contract. Set it to the account id you used above.
 
-    const CONTRACT_NAME = process.env.CONTRACT_NAME || 'near-blank-project.YOUR-NAME.testnet'
+    REACT_APP_NEP171_CONTRACT_NAME=dev-xxx-xxx
+    REACT_APP_USERINFO_CONTRACT_NAME=dev-xxx-xxx
 
 
 
