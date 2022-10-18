@@ -45,14 +45,14 @@ impl UserInfoContract {
         return self.user_info_list.get(&account_id);
     }
 
-    pub fn test_user_info(&self) -> UserInfo {
-        let userinfo: UserInfo = UserInfo {
-            name: "myname".to_string(),
-            phone: "myphone".to_string(),
-            email: "myemail".to_string(),
+    pub fn test_user_info(&self, userinfo: UserInfo) -> UserInfo {
+        let new_userinfo: UserInfo = UserInfo {
+            name: format!("{}{}", "contract-".to_string(), userinfo.name),
+            phone: format!("{}{}", "contract-".to_string(), userinfo.phone),
+            email: format!("{}{}", "contract-".to_string(), userinfo.email),
         };
 
-        return userinfo;
+        return new_userinfo;
     }
 }
 

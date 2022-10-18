@@ -4,7 +4,8 @@ import nearLogo from "./near-logo.svg";
 import { wallet } from "../../utils/near";
 import pkg from "../../../package.json";
 import styles from "./Nav.module.css";
-import * as UserInfo from "../../contracts/userinfo";
+import * as UserInfoContract from "../../contracts/userinfo";
+import {UserInfo} from "../../contracts/userinfo";
 
 function signIn() {
   wallet.requestSignIn({
@@ -22,10 +23,18 @@ function signOut() {
 
 export function Nav() {
   const currentUser = wallet.getAccountId();
-  console.log("currentUser", currentUser)
+  
+  // const new_userinfo: UserInfo = {
+  //   name: "newname",
+  //   phone: "newphone",
+  //   email: "newemail",
+  // };
+  
   useEffect(() => {
-    UserInfo.testUserInfo().then(console.log);
-  })
+    // UserInfoContract.testUserInfo({userinfo: new_userinfo}).then(console.log);
+    // UserInfoContract.updateUserInfo({account_id: currentUser, userinfo: new_userinfo});
+    // UserInfoContract.getUserInfo({account_id: currentUser}).then(console.log)
+  }, [])
   return (
     <nav className={styles.nav}>
       <h1 className={styles.title}>

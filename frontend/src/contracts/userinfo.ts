@@ -28,7 +28,7 @@ export const CONTRACT_NAME = "dev-1666100011540-95227225137871";
 const connectedWalletAccount = wallet.account();
 export const Untyped = new naj.Contract(connectedWalletAccount, CONTRACT_NAME, {
   viewMethods: ["get_user_info", "test_user_info"],
-  changeMethods: ["update_user_info"],
+  changeMethods: ["change_user_info"],
 });
 
 /**
@@ -43,12 +43,12 @@ export interface UserInfo {
 /**
  * Get most recent 10 messages
  */
-export async function getUserInfo(accountId: any): Promise<UserInfo[]> {
-  return view(CONTRACT_NAME, "get_user_info");
+export async function getUserInfo(args: {account_id: string}): Promise<UserInfo[]> {
+  return view(CONTRACT_NAME, "get_user_info", args);
 }
 
-export async function testUserInfo(): Promise<UserInfo[]> {
-  return view(CONTRACT_NAME, "test_user_info");
+export async function testUserInfo(args: {userinfo: UserInfo}): Promise<UserInfo[]> {
+  return view(CONTRACT_NAME, "test_user_info", args);
 }
 
 /**
@@ -67,7 +67,10 @@ export async function testUserInfo(): Promise<UserInfo[]> {
  * @param options.stringify Convert input arguments into a bytes array. By default the input is treated as a JSON. This is useful if the contract accepts Borsh (see https://borsh.io)
  */
 export async function updateUserInfo(
-  userinfo: UserInfo,
+  args: {
+    account_id: string,
+    userinfo: UserInfo,
+  },
   options?: {
     attachedDeposit?: NEAR;
     gas?: Gas;
@@ -76,5 +79,5 @@ export async function updateUserInfo(
     stringify?: (input: any) => Buffer;
   }
 ): Promise<void> {
-  return call(CONTRACT_NAME, "update_user_info", userinfo, options);
+  return call(CONTRACT_NAME, "change_user_info", args,  options);
 }

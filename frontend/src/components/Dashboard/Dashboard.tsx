@@ -1,47 +1,49 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import {UserInfo} from "../../contracts/userinfo";
+import * as UserInfoContract from "../../contracts/userinfo";
+import { wallet } from "../../utils/near";
 
-interface FormData {
-  name: string;
-  phone: string;
-  email: string;
-}
 const testData = {
   cName: "testing freeart",
   cPhone: "102030102031",
   cEmail: "testing@freeart.com",
 };
 export const Dashboard = (contractId: any, walletToUse: any) => {
-  const [formData, setFormData] = useState<FormData>({
+  const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     phone: "",
     email: "",
   });
   const [editing, setEditing] = useState(false);
 
-  const { name, phone, email } = formData;
-  const { cName, cPhone, cEmail } = testData;
+  const { name, phone, email } = userInfo;
+  
+  const currentUser = wallet.getAccountId();
+  console.log("currentUser", currentUser)
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
 
-  const login = (name: string, phone: string, email: string) => {
-    console.log("name: ", name);
-    console.log("phone: ", phone);
-    console.log("email: ", email);
+  const updateUserInfo = (name: string, phone: string, email: string) => {
+    const new_userinfo: UserInfo = {name, phone, email};
+    // UserInfoContract.updateUserInfo({account_id: currentUser, userinfo});
+    UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
+      console.log("userinfo", userinfo)
+    })
   };
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    login(name, phone, email);
+    updateUserInfo(name, phone, email);
     setEditing(false);
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-    });
   };
 
   useEffect(() => {
+    UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
+      console.log("userinfo", userinfo);
+      if(userinfo[0] != undefined && userinfo[0].name != "")
+        setUserInfo({name: userinfo[0]?.name, phone: userinfo[0]?.phone, email: userinfo[0]?.email});
+    })
   }, [])
 
   return (
@@ -54,11 +56,11 @@ export const Dashboard = (contractId: any, walletToUse: any) => {
       </div>
       <div className="account-info">
         <label>Full Name</label>
-        <label>{cName}</label>
+        <label>{name}</label>
         <label>Phone Number</label>
-        <label>{cPhone}</label>
+        <label>{phone}</label>
         <label>Email Address</label>
-        <label>{cEmail}</label>
+        <label>{email}</label>
       </div>
       {editing && (
         <div className="modal" onClick={() => setEditing(false)}>
