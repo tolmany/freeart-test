@@ -4,6 +4,7 @@ use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[near_bindgen]
+#[derive(BorshDeserialize, BorshSerialize)]
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct UserInfo {
@@ -13,31 +14,27 @@ pub struct UserInfo {
 }
 
 #[near_bindgen]
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct UserInfoContract {
-    pub userinfoList: HashMap<AccountId, UserInfo>,
+    user_info_list: HashMap<AccountId, UserInfo>,
 }
 
 #[near_bindgen]
 impl UserInfoContract {
-    pub fn default() -> Self {
-        Self {
-            userinfoList: HashMap::new()
-        }
-    }
-    pub fn changeUserInfo(&mut self, account_id: AccountId, userinfo: UserInfo) -> Option<&UserInfo>{
+    pub fn change_user_info(&mut self, account_id: AccountId, userinfo: UserInfo) -> Option<&UserInfo>{
         let _tmp_account_id = account_id.clone();
-        if self.userinfoList.contains_key(&account_id) {
-            *self.userinfoList.get_mut(&account_id).unwrap() = userinfo;
+        if self.user_info_list.contains_key(&account_id) {
+            *self.user_info_list.get_mut(&account_id).unwrap() = userinfo;
         } else {
-            self.userinfoList.insert(account_id, userinfo);
+            self.user_info_list.insert(account_id, userinfo);
         }
 
         // 
-        return self.userinfoList.get(&_tmp_account_id);
+        return self.user_info_list.get(&_tmp_account_id);
     }
 
-    pub fn getUserInfo(&mut self, account_id: AccountId) -> Option<&UserInfo> {
-        return self.userinfoList.get(&account_id);
+    pub fn get_user_info(&self, account_id: AccountId) -> Option<&UserInfo> {
+        return self.user_info_list.get(&account_id);
     }
 }
 
@@ -61,7 +58,7 @@ mod tests {
     }
 
     #[test]
-    fn test_changeUserInfo() {
+    fn test_change_user_info() {
         let mut context = get_context(accounts(0));
         testing_env!(context.build());
         let mut contract = UserInfoContract::default();
@@ -71,7 +68,7 @@ mod tests {
             phone: String::from("102030102031"),
             email: String::from("testing@freeart.com"),
         };
-        let inserted_userinfo = contract.changeUserInfo(accounts(0), userinfo).unwrap();
+        let inserted_userinfo = contract.change_user_info(accounts(0), userinfo).unwrap();
         assert_eq!(inserted_userinfo.name.to_string(), "testing freeart".to_string());
         assert_eq!(inserted_userinfo.phone.to_string(), "102030102031".to_string());
         assert_eq!(inserted_userinfo.email.to_string(), "testing@freeart.com".to_string());
@@ -81,7 +78,7 @@ mod tests {
             phone: String::from("555555555555"),
             email: String::from("testing@freeart.com"),
         };
-        let updated_userinfo = contract.changeUserInfo(accounts(0), userinfo1).unwrap();
+        let updated_userinfo = contract.change_user_info(accounts(0), userinfo1).unwrap();
         assert_eq!(updated_userinfo.name.to_string(), "testing freeart".to_string());
         assert_eq!(updated_userinfo.phone.to_string(), "555555555555".to_string());
         assert_eq!(updated_userinfo.email.to_string(), "testing@freeart.com".to_string());
