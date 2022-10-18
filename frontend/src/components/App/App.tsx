@@ -1,7 +1,7 @@
 import React from "react";
 import { Nav } from "../Nav";
 import * as GuestBook from "../../contracts/guest-book";
-import {Login} from "../Login";
+import { Dashboard } from "../Dashboard";
 
 export function App() {
   React.useEffect(() => {
@@ -10,7 +10,7 @@ export function App() {
   return (
     <>
       <Nav />
-      <Login />
+      <Dashboard />
     </>
   );
 }
