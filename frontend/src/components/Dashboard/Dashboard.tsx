@@ -3,12 +3,7 @@ import {UserInfo} from "../../contracts/userinfo";
 import * as UserInfoContract from "../../contracts/userinfo";
 import { wallet } from "../../utils/near";
 
-const testData = {
-  cName: "testing freeart",
-  cPhone: "102030102031",
-  cEmail: "testing@freeart.com",
-};
-export const Dashboard = (contractId: any, walletToUse: any) => {
+export const Dashboard = () => {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     phone: "",
@@ -19,17 +14,17 @@ export const Dashboard = (contractId: any, walletToUse: any) => {
   const { name, phone, email } = userInfo;
   
   const currentUser = wallet.getAccountId();
-  console.log("currentUser", currentUser)
-
+  
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
 
   const updateUserInfo = (name: string, phone: string, email: string) => {
     const new_userinfo: UserInfo = {name, phone, email};
-    // UserInfoContract.updateUserInfo({account_id: currentUser, userinfo});
+    UserInfoContract.updateUserInfo({account_id: currentUser, userinfo: new_userinfo});
     UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
-      console.log("userinfo", userinfo)
+      if(userinfo != undefined && userinfo.name != "")
+        setUserInfo({name: userinfo?.name, phone: userinfo?.phone, email: userinfo?.email});
     })
   };
   const onSubmit = (e: FormEvent) => {
@@ -40,9 +35,8 @@ export const Dashboard = (contractId: any, walletToUse: any) => {
 
   useEffect(() => {
     UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
-      console.log("userinfo", userinfo);
-      if(userinfo[0] != undefined && userinfo[0].name != "")
-        setUserInfo({name: userinfo[0]?.name, phone: userinfo[0]?.phone, email: userinfo[0]?.email});
+      if(userinfo != undefined && userinfo.name != "")
+        setUserInfo({name: userinfo?.name, phone: userinfo?.phone, email: userinfo?.email});
     })
   }, [])
 
@@ -56,11 +50,11 @@ export const Dashboard = (contractId: any, walletToUse: any) => {
       </div>
       <div className="account-info">
         <label>Full Name</label>
-        <label>{name}</label>
+        <label>{name ?? ''}</label>
         <label>Phone Number</label>
-        <label>{phone}</label>
+        <label>{phone ?? ''}</label>
         <label>Email Address</label>
-        <label>{email}</label>
+        <label>{email ?? ''}</label>
       </div>
       {editing && (
         <div className="modal" onClick={() => setEditing(false)}>

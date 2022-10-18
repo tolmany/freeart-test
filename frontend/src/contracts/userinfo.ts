@@ -43,11 +43,11 @@ export interface UserInfo {
 /**
  * Get most recent 10 messages
  */
-export async function getUserInfo(args: {account_id: string}): Promise<UserInfo[]> {
+export async function getUserInfo(args: {account_id: string}): Promise<UserInfo> {
   return view(CONTRACT_NAME, "get_user_info", args);
 }
 
-export async function testUserInfo(args: {userinfo: UserInfo}): Promise<UserInfo[]> {
+export async function testUserInfo(args: {userinfo: UserInfo}): Promise<UserInfo> {
   return view(CONTRACT_NAME, "test_user_info", args);
 }
 
