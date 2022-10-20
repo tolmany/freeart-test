@@ -9,30 +9,13 @@ export const Dashboard = () => {
     phone: "",
     email: "",
   });
-  const [editing, setEditing] = useState(false);
+
+  const [asset, setAsset] = useState(0);
 
   const { name, phone, email } = userInfo;
   
   const currentUser = wallet.getAccountId();
   
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
-  };
-
-  const updateUserInfo = (name: string, phone: string, email: string) => {
-    const new_userinfo: UserInfo = {name, phone, email};
-    UserInfoContract.updateUserInfo({account_id: currentUser, userinfo: new_userinfo});
-    UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
-      if(userinfo != undefined && userinfo.name != "")
-        setUserInfo({name: userinfo?.name, phone: userinfo?.phone, email: userinfo?.email});
-    })
-  };
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    updateUserInfo(name, phone, email);
-    setEditing(false);
-  };
-
   useEffect(() => {
     UserInfoContract.getUserInfo({account_id: currentUser}).then(userinfo => {
       if(userinfo != undefined && userinfo.name != "")
@@ -43,58 +26,12 @@ export const Dashboard = () => {
   return (
     <section className="container">
       <div className="flex">
-        <h1 className="large text-primary">Account Information</h1>
-        <button className="button" onClick={() => setEditing(true)}>
-          Edit
-        </button>
+        <h1 className="large text-primary">Amount of Holding LP-Tokens</h1>
       </div>
       <div className="account-info">
-        <label>Full Name</label>
-        <label>{name ?? ''}</label>
-        <label>Phone Number</label>
-        <label>{phone ?? ''}</label>
-        <label>Email Address</label>
-        <label>{email ?? ''}</label>
+        <label>Assets</label>
+        <label>{asset ?? ''}</label>
       </div>
-      {editing && (
-        <div className="modal" onClick={() => setEditing(false)}>
-          <div
-            className="form modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Full Name"
-                name="name"
-                value={name}
-                onChange={onChange}
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                name="phone"
-                value={phone}
-                onChange={onChange}
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="email"
-                placeholder="Email Address"
-                name="email"
-                value={email}
-                onChange={onChange}
-              />
-            </div>
-            <button type="submit" onClick={onSubmit} className="button submit">
-              Save
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
