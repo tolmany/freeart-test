@@ -1,7 +1,6 @@
 import React from "react";
 import { Nav } from "../Nav";
-import * as UserInfo from "../../contracts/userinfo";
-import { Dashboard } from "../Dashboard";
+import { UserInfoComponent } from "../UserInfo";
 
 export function App() {
   React.useEffect(() => {
@@ -11,7 +10,7 @@ export function App() {
   return (
     <>
       <Nav />
-      <Dashboard />
+      <UserInfoComponent />
     </>
   );
 }
